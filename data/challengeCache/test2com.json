@@ -1,0 +1,538 @@
+{
+  "intro": {
+    "slug": "node",
+    "title": "Node.js",
+    "intro": "Every question here starts BROKEN, not correct — read the intended behavior, find the bug, and fix it in the editor on the left. Click Run to check your fix against the given test cases for real (it actually executes your code, in your own browser, sandboxed in a Web Worker with a timeout — an infinite loop just times out instead of freezing anything). Once your fix passes the given cases, call the function one more time with the input the question asks for, and submit that result as the flag.",
+    "icon": "tree",
+    "questionCount": 10
+  },
+  "questions": [
+    {
+      "id": "node-01",
+      "title": "One Off the End",
+      "description": "`sumRange(a, b)` should sum every integer from `a` to `b`, **inclusive**. It doesn't — one of the endpoints is silently dropped.\n\n```js\nfunction sumRange(a, b) {\n  let total = 0;\n  for (let i = a; i < b; i++) {\n    total += i;\n  }\n  return total;\n}\n```\n\nFix it in the editor, then click **Run** — it checks:\n\n- `sumRange(1, 5)` should be `15`\n- `sumRange(3, 3)` should be `3`\n\nOnce both pass, call your fixed `sumRange(10, 15)` and submit the result as `CTF{result}`.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "hints": [
+        {
+          "text": "Trace `sumRange(3, 3)` by hand against the loop condition `i < b`. Does the loop body ever run at all?",
+          "penalty": 15
+        },
+        {
+          "text": "The loop must include `b` itself. Change the comparison so the last iteration is `i === b`, not one before it.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "off-by-one",
+        "loops"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function sumRange(a, b) {\n  let total = 0;\n  for (let i = a; i < b; i++) {\n    total += i;\n  }\n  return total;\n}",
+      "entryPoint": "sumRange",
+      "tests": [
+        {
+          "args": [
+            1,
+            5
+          ],
+          "expected": 15
+        },
+        {
+          "args": [
+            3,
+            3
+          ],
+          "expected": 3
+        }
+      ],
+      "correctCode": "function sumRange(a, b) {\n  let total = 0;\n  for (let i = a; i <= b; i++) {\n    total += i;\n  }\n  return total;\n}"
+    },
+    {
+      "id": "node-02",
+      "title": "Same Shape, Different Boxes",
+      "description": "`isSame(a, b)` should return `true` when two arrays hold the same values in the same order — a **value** comparison, not a reference comparison.\n\n```js\nfunction isSame(a, b) {\n  return a === b;\n}\n```\n\n`===` on two arrays checks whether they are literally the same object in memory, which is almost never what `[1,2,3]` built twice actually is.\n\nRun checks:\n\n- `isSame([1, 2, 3], [1, 2, 3])` should be `true`\n- `isSame([1, 2], [1, 2, 3])` should be `false`\n\nOnce both pass, submit the results of these three calls with your fix, joined by underscores, as `CTF{r1_r2_r3}`:\n\n- `isSame([1], [1])`\n- `isSame([1, 2], [2, 1])`\n- `isSame([], [])`",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "hints": [
+        {
+          "text": "Two arrays are equal in VALUE when they have the same length and every element at the same index matches — nothing to do with whether they're the same object.",
+          "penalty": 15
+        },
+        {
+          "text": "`a.length === b.length && a.every((v, i) => v === b[i])` is the whole fix.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "equality",
+        "arrays"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function isSame(a, b) {\n  return a === b;\n}",
+      "entryPoint": "isSame",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": true
+        },
+        {
+          "args": [
+            [
+              1,
+              2
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": false
+        }
+      ],
+      "correctCode": "function isSame(a, b) {\n  return a.length === b.length && a.every((v, i) => v === b[i]);\n}"
+    },
+    {
+      "id": "node-03",
+      "title": "Backwards, With Gaps",
+      "description": "`reverseString(s)` should reverse a string with nothing else changed.\n\n```js\nfunction reverseString(s) {\n  return s.split('').reverse().join(' ');\n}\n```\n\nRun checks:\n\n- `reverseString(\"abc\")` should be `\"cba\"`\n- `reverseString(\"hi\")` should be `\"ih\"`\n\nOnce both pass, submit the result of your fixed `reverseString(\"flags\")` as `CTF{result}` — lower case, exactly as returned.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "hints": [
+        {
+          "text": "`.split('').reverse()` is already correct — the bug is entirely in how the pieces are put back together.",
+          "penalty": 15
+        },
+        {
+          "text": "`.join(' ')` inserts a space between every character. You want no separator at all: `.join('')`.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "strings"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function reverseString(s) {\n  return s.split('').reverse().join(' ');\n}",
+      "entryPoint": "reverseString",
+      "tests": [
+        {
+          "args": [
+            "abc"
+          ],
+          "expected": "cba"
+        },
+        {
+          "args": [
+            "hi"
+          ],
+          "expected": "ih"
+        }
+      ],
+      "correctCode": "function reverseString(s) {\n  return s.split('').reverse().join('');\n}"
+    },
+    {
+      "id": "node-04",
+      "title": "Multiplying by Nothing",
+      "description": "`factorial(n)` should compute `n!` (`n × (n-1) × … × 1`, with `factorial(0)` defined as `1`).\n\n```js\nfunction factorial(n) {\n  if (n === 0) {\n    return 0;\n  }\n  return n * factorial(n - 1);\n}\n```\n\nThis one is subtle: it looks almost right, and it terminates, and it doesn't throw — it just multiplies every call by `0` somewhere along the way.\n\nRun checks:\n\n- `factorial(3)` should be `6`\n- `factorial(0)` should be `1`\n- `factorial(5)` should be `120`\n\nOnce all three pass, submit the result of your fixed `factorial(6)` as `CTF{result}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "hints": [
+        {
+          "text": "Trace `factorial(2)`: it calls `factorial(1)`, which calls `factorial(0)`. Whatever `factorial(0)` returns gets multiplied into every step above it.",
+          "penalty": 30
+        },
+        {
+          "text": "The base case — what an empty product equals — has to be `1`, not `0`. Multiplying anything by `0` at the bottom of the recursion zeroes out the whole chain.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "recursion",
+        "base-case"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function factorial(n) {\n  if (n === 0) {\n    return 0;\n  }\n  return n * factorial(n - 1);\n}",
+      "entryPoint": "factorial",
+      "tests": [
+        {
+          "args": [
+            3
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            0
+          ],
+          "expected": 1
+        },
+        {
+          "args": [
+            5
+          ],
+          "expected": 120
+        }
+      ],
+      "correctCode": "function factorial(n) {\n  if (n === 0) {\n    return 1;\n  }\n  return n * factorial(n - 1);\n}"
+    },
+    {
+      "id": "node-05",
+      "title": "The Seed That Wasn't Zero",
+      "description": "`sumEvens(arr)` should sum only the even numbers in `arr`.\n\n```js\nfunction sumEvens(arr) {\n  return arr.reduce((acc, x) => (x % 2 === 0 ? acc + x : acc), 1);\n}\n```\n\nRun checks:\n\n- `sumEvens([1, 2, 3, 4])` should be `6`\n- `sumEvens([1, 3, 5])` should be `0`\n\nOnce both pass, submit the result of your fixed `sumEvens([10, 15, 20, 25, 30])` as `CTF{result}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "hints": [
+        {
+          "text": "`reduce`'s second argument is the STARTING value of the accumulator — check what it's seeded with before any element has been added.",
+          "penalty": 30
+        },
+        {
+          "text": "Summing should start from `0`, not `1`. That trailing `1` in the reduce call is the whole bug.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "reduce",
+        "arrays"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function sumEvens(arr) {\n  return arr.reduce((acc, x) => (x % 2 === 0 ? acc + x : acc), 1);\n}",
+      "entryPoint": "sumEvens",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              2,
+              3,
+              4
+            ]
+          ],
+          "expected": 6
+        },
+        {
+          "args": [
+            [
+              1,
+              3,
+              5
+            ]
+          ],
+          "expected": 0
+        }
+      ],
+      "correctCode": "function sumEvens(arr) {\n  return arr.reduce((acc, x) => (x % 2 === 0 ? acc + x : acc), 0);\n}"
+    },
+    {
+      "id": "node-06",
+      "title": "Ten Sorts Before Two",
+      "description": "`sortAscending(nums)` should sort an array of numbers into ascending numeric order.\n\n```js\nfunction sortAscending(nums) {\n  return nums.sort();\n}\n```\n\n`Array.prototype.sort()` with no arguments compares elements as STRINGS by default — so `10` sorts before `2`, because `\"1\"` comes before `\"2\"`.\n\nRun checks:\n\n- `sortAscending([10, 1, 2])` should be `[1, 2, 10]`\n- `sortAscending([40, 5, 100, 25])` should be `[5, 25, 40, 100]`\n\nOnce both pass, run your fixed `sortAscending([9, 80, 7, 15])` and submit the four results in order as `CTF{a_b_c_d}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "hints": [
+        {
+          "text": "`sort()` needs a comparator function to sort numbers numerically — without one, it converts everything to a string first.",
+          "penalty": 30
+        },
+        {
+          "text": "`nums.sort((a, b) => a - b)` — a negative result means `a` comes first, which is exactly numeric ascending order.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "sorting",
+        "comparator"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function sortAscending(nums) {\n  return nums.sort();\n}",
+      "entryPoint": "sortAscending",
+      "tests": [
+        {
+          "args": [
+            [
+              10,
+              1,
+              2
+            ]
+          ],
+          "expected": [
+            1,
+            2,
+            10
+          ]
+
+        },
+        {
+          "args": [
+            [
+              40,
+              5,
+              100,
+              25
+            ]
+          ],
+          "expected": [
+            5,
+            25,
+            40,
+            100
+          ]
+        }
+      ],
+      "correctCode": "function sortAscending(nums) {\n  return nums.sort((a, b) => a - b);\n}"
+    },
+    {
+      "id": "node-07",
+      "title": "Every Counter Remembers the Same Number",
+      "description": "`makeCounters(n)` should return `[0, 1, 2, ..., n-1]` — built by creating `n` little functions that each remember their own index, then calling all of them.\n\n```js\nfunction makeCounters(n) {\n  const fns = [];\n  for (var i = 0; i < n; i++) {\n    fns.push(() => i);\n  }\n  return fns.map((fn) => fn());\n}\n```\n\nEvery function in `fns` ends up returning the SAME value — the loop variable's final value, not the value it had when that particular function was created.\n\nRun checks:\n\n- `makeCounters(3)` should be `[0, 1, 2]`\n- `makeCounters(5)` should be `[0, 1, 2, 3, 4]`\n\nOnce both pass, submit your fixed `makeCounters(4)` joined by underscores as `CTF{a_b_c_d}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "hints": [
+        {
+          "text": "`var` is function-scoped, not block-scoped — there is only ONE `i` for the entire loop, and every closure created inside the loop shares that same one variable.",
+          "penalty": 30
+        },
+        {
+          "text": "Changing `var i` to `let i` gives each iteration of the loop its own fresh binding of `i`, which is what each closure needs to capture.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "closures",
+        "var-vs-let"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function makeCounters(n) {\n  const fns = [];\n  for (var i = 0; i < n; i++) {\n    fns.push(() => i);\n  }\n  return fns.map((fn) => fn());\n}",
+      "entryPoint": "makeCounters",
+      "tests": [
+        {
+          "args": [
+            3
+          ],
+          "expected": [
+            0,
+            1,
+            2
+          ]
+        },
+        {
+          "args": [
+            5
+          ],
+          "expected": [
+            0,
+            1,
+            2,
+            3,
+            4
+          ]
+        }
+      ],
+      "correctCode": "function makeCounters(n) {\n  const fns = [];\n  for (let i = 0; i < n; i++) {\n    fns.push(() => i);\n  }\n  return fns.map((fn) => fn());\n}"
+    },
+    {
+      "id": "node-08",
+      "title": "The Copy That Wasn't",
+      "description": "`cloneAndMutate(user)` clones `user`, changes the CLONE's `address.city`, and returns the ORIGINAL `user`'s `address.city` — which should be completely unaffected by anything done to the clone.\n\n```js\nfunction cloneAndMutate(user) {\n  const copy = { ...user };\n  copy.address.city = 'Nowhere';\n  return user.address.city;\n}\n```\n\nThe spread `{ ...user }` only copies the TOP level of the object. `copy.address` and `user.address` end up pointing at the exact same nested object, so mutating one mutates both.\n\nRun checks:\n\n- `cloneAndMutate({ name: 'A', address: { city: 'Boston' } })` should be `\"Boston\"`\n- `cloneAndMutate({ name: 'B', address: { city: 'Reno' } })` should be `\"Reno\"`\n\nOnce both pass, submit the result of your fixed `cloneAndMutate({ name: 'C', address: { city: 'Austin' } })` as `CTF{result}` — exactly as returned, capitalization included.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "hints": [
+        {
+          "text": "A spread (`{ ...user }`) is a SHALLOW copy — nested objects and arrays inside it are shared by reference with the original, not duplicated.",
+          "penalty": 45
+        },
+        {
+          "text": "The `address` field needs its own copy too: `{ ...user, address: { ...user.address } }`.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "shallow-copy",
+        "objects"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function cloneAndMutate(user) {\n  const copy = { ...user };\n  copy.address.city = 'Nowhere';\n  return user.address.city;\n}",
+      "entryPoint": "cloneAndMutate",
+      "tests": [
+        {
+          "args": [
+            {
+              "name": "A",
+              "address": {
+                "city": "Boston"
+              }
+            }
+          ],
+          "expected": "Boston"
+        },
+        {
+          "args": [
+            {
+              "name": "B",
+              "address": {
+                "city": "Reno"
+              }
+            }
+          ],
+          "expected": "Reno"
+        }
+      ],
+      "correctCode": "function cloneAndMutate(user) {\n  const copy = { ...user, address: { ...user.address } };\n  copy.address.city = 'Nowhere';\n  return user.address.city;\n}"
+    },
+    {
+      "id": "node-09",
+      "title": "One Level, Not All of Them",
+      "description": "`flattenOnce(arr)` should flatten `arr` by exactly ONE level of nesting — equivalent to `arr.flat(1)` — leaving anything nested two or more levels deep still nested.\n\n```js\nfunction flattenOnce(arr) {\n  return arr.flat(Infinity);\n}\n```\n\nRun checks:\n\n- `flattenOnce([1, [2, 3], [4, [5, 6]]])` should be `[1, 2, 3, 4, [5, 6]]`\n- `flattenOnce([[1, 2], [3, [4]]])` should be `[1, 2, 3, [4]]`\n\nOnce both pass, run your fixed `flattenOnce([[1, [2]], [3, 4], [[5]]])` and submit the LENGTH of the resulting array as `CTF{n}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "hints": [
+        {
+          "text": "`.flat(Infinity)` flattens every level of nesting, all the way down — the question only ever asked for one level.",
+          "penalty": 45
+        },
+        {
+          "text": "`.flat(1)` (or just `.flat()`, whose default depth is `1`) is the fix.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "arrays",
+        "flat"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "function flattenOnce(arr) {\n  return arr.flat(Infinity);\n}",
+      "entryPoint": "flattenOnce",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              [
+                2,
+                3
+              ],
+              [
+                4,
+                [
+                  5,
+                  6
+                ]
+              ]
+            ]
+          ],
+          "expected": [
+            1,
+            2,
+            3,
+            4,
+            [
+              5,
+              6
+            ]
+          ]
+        },
+        {
+          "args": [
+            [
+              [
+                1,
+                2
+              ],
+              [
+                3,
+                [
+                  4
+                ]
+              ]
+            ]
+          ],
+          "expected": [
+            1,
+            2,
+            3,
+            [
+              4
+            ]
+          ]
+        }
+      ],
+      "correctCode": "function flattenOnce(arr) {\n  return arr.flat(1);\n}"
+    },
+    {
+      "id": "node-10",
+      "title": "Whose `this` Is It Anyway",
+      "description": "`runChallenge(factors)` should return each factor multiplied by `obj.value`.\n\n```js\nconst obj = {\n  value: 10,\n  getValueTimes: function (factors) {\n    return factors.map(function (f) {\n      return this.value * f;\n    });\n  },\n};\n\nfunction runChallenge(factors) {\n  return obj.getValueTimes(factors);\n}\n```\n\nThis one doesn't return a wrong number — it throws. Inside a plain `function (f) { ... }` passed to `.map`, `this` is not bound to `obj` at all.\n\nRun checks:\n\n- `runChallenge([1, 2, 3])` should be `[10, 20, 30]`\n- `runChallenge([0.5, 2])` should be `[5, 20]`\n\nOnce both pass, submit your fixed `runChallenge([4, 5, 6])` joined by underscores as `CTF{a_b_c}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "hints": [
+        {
+          "text": "A regular `function` passed as a callback does not inherit `this` from where it was written — only from how IT is called, and `.map` calls it plainly, with no receiver.",
+          "penalty": 45
+        },
+        {
+          "text": "An ARROW function has no `this` of its own — it lexically inherits `this` from `getValueTimes`, which IS `obj` when called as `obj.getValueTimes(...)`. Replace the callback with `(f) => this.value * f`.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "this-binding",
+        "closures"
+      ],
+      "challengeType": "fix-code",
+      "language": "javascript",
+      "brokenCode": "const obj = {\n  value: 10,\n  getValueTimes: function (factors) {\n    return factors.map(function (f) {\n      return this.value * f;\n    });\n  },\n};\n\nfunction runChallenge(factors) {\n  return obj.getValueTimes(factors);\n}",
+      "entryPoint": "runChallenge",
+      "tests": [
+        {
+          "args": [
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected": [
+            10,
+            20,
+            30
+          ]
+        },
+        {
+          "args": [
+            [
+              0.5,
+              2
+            ]
+          ],
+          "expected": [
+            5,
+            20
+          ]
+        }
+      ],
+      "correctCode": "const obj = {\n  value: 10,\n  getValueTimes: function (factors) {\n    return factors.map((f) => {\n      return this.value * f;\n    });\n  },\n};\n\nfunction runChallenge(factors) {\n  return obj.getValueTimes(factors);\n}"
+    }
+  ],
+  "cachedAt": "2026-09-01T11:58:02.942Z"
+}

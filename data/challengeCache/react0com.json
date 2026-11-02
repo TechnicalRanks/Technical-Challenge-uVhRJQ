@@ -1,0 +1,238 @@
+{
+  "intro": {
+    "slug": "react",
+    "title": "React",
+    "intro": "React re-runs your component function far more often than most people expect, and far less often than they fear. Almost every confusing React bug comes down to one of three questions: how many times did this render, which closure did that callback capture, and did this element keep its identity across the update? Each challenge below is a short component you can trace on paper. Assume React 18 or later, and that effects run in a real browser unless the question says otherwise.",
+    "icon": "atom",
+    "questionCount": 10
+  },
+  "questions": [
+    {
+      "id": "react-01",
+      "title": "Twice on Purpose",
+      "description": "A developer adds a counter to a component and is alarmed by what they see in development:\n\n```jsx\nlet renders = 0;\nlet setups = 0;\nlet cleanups = 0;\n\nfunction Widget() {\n  renders++;\n  useEffect(() => {\n    setups++;\n    return () => { cleanups++; };\n  }, []);\n  return null;\n}\n\ncreateRoot(el).render(\n  <StrictMode>\n    <Widget />\n  </StrictMode>\n);\n```\n\nThis is a **development** build, and `Widget` is mounted exactly once — it is never updated or unmounted afterwards. StrictMode deliberately exercises the component twice to surface impure renders and effects that are not safely re-runnable.\n\nAfter the initial mount has settled, what are the values of `renders` and `setups`?\n\nSubmit them as `CTF{renders_R_setups_S}` — for example, if both were 9 you would submit `CTF{renders_9_setups_9}`.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "StrictMode in development does two separate things on mount: it invokes the component function an extra time, and it runs the effect, immediately tears it down, and runs it again.",
+          "penalty": 15
+        },
+        {
+          "text": "Both counters end up with the same value, and it is not one. `cleanups`, the counter the question does not ask about, ends on 1 — the teardown between the two effect runs.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "strictmode",
+        "effects",
+        "render-count"
+      ]
+    },
+    {
+      "id": "react-02",
+      "title": "Four Updates, One Render",
+      "description": "One click handler queues four state updates:\n\n```jsx\nfunction Counter() {\n  const [n, setN] = useState(0);\n\n  function handleClick() {\n    setN(n + 1);\n    setN((v) => v + 5);\n    setN(n + 2);\n    setN((v) => v * 3);\n  }\n\n  return <button onClick={handleClick}>{n}</button>;\n}\n```\n\nThe button is clicked **once**, starting from `n === 0`. React batches all four updates into a single re-render, then replays the queue in order against the pending value.\n\nThe distinction that matters: passing a value (`setN(n + 1)`) *replaces* whatever the queue has accumulated so far, because `n` is a constant captured by this render's closure. Passing a function (`setN(v => ...)`) receives the accumulated value instead.\n\nWhat number does the button show after that single click?\n\nSubmit it as `CTF{count_N}`.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "Walk the queue with a running value that starts at 0. Each of the four entries either overwrites that running value with a fixed number, or transforms it.",
+          "penalty": 15
+        },
+        {
+          "text": "`n` is 0 for the whole handler, so the third call overwrites the running value with 2 and discards everything the second call computed. Only the fourth call's transformation survives.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "usestate",
+        "batching"
+      ]
+    },
+    {
+      "id": "react-03",
+      "title": "Three Dependency Arrays",
+      "description": "One component, three effects, three different dependency arrays:\n\n```jsx\nfunction Panel() {\n  const [count, setCount] = useState(0);\n  const [other, setOther] = useState('a');\n\n  useEffect(() => { logNoDeps(); });\n  useEffect(() => { logEmpty(); }, []);\n  useEffect(() => { logDep(); }, [count]);\n\n  return <span>{count}{other}</span>;\n}\n```\n\nThe component mounts, and then exactly three updates happen, each on its own commit and each actually changing the value it sets:\n\n1. `setCount(1)`\n2. `setCount(2)`\n3. `setOther('b')`\n\nThis is a production build with no StrictMode, so nothing is doubled. How many times has each of the three log functions been called once all of that has settled?\n\nSubmit the three counts as `CTF{effects_A_B_C}` — the no-dependency effect, the empty-array effect, and the `[count]` effect, in that order.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "There are four commits in total: the mount plus three updates. Count how many of those four each effect participates in.",
+          "penalty": 15
+        },
+        {
+          "text": "The no-dependency effect re-runs on every commit. The empty-array one only ever runs at mount. The `[count]` one runs at mount and then only when `count` differs from the previous render — the third update leaves it alone.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "useeffect",
+        "dependencies"
+      ]
+    },
+    {
+      "id": "react-04",
+      "title": "The Interval That Forgot",
+      "description": "Two components set up the same interval in the same way, and differ by one line:\n\n```jsx\nfunction TickerA() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => setCount(count + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <span>{count}</span>;\n}\n\nfunction TickerB() {\n  const [count, setCount] = useState(0);\n  useEffect(() => {\n    const id = setInterval(() => setCount((c) => c + 1), 1000);\n    return () => clearInterval(id);\n  }, []);\n  return <span>{count}</span>;\n}\n```\n\nBoth are mounted side by side, with no StrictMode, and left alone for exactly five interval ticks. The empty dependency array means each effect body runs once, at mount, and the callback passed to `setInterval` keeps whatever variables it captured at that moment for as long as the interval lives.\n\nWhat number does each component display after those five ticks?\n\nSubmit both as `CTF{ticker_A_B}` — TickerA's number, then TickerB's.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "The interval callback in TickerA closes over the `count` from the render in which the effect ran. That effect never re-runs, so that captured value never changes, no matter how many times the component re-renders.",
+          "penalty": 30
+        },
+        {
+          "text": "TickerA's callback computes the same fixed sum on every tick; after the first tick the state stops changing, so React bails out of further renders. TickerB's updater receives the current value each time, so it climbs by one per tick.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "stale-closure",
+        "useeffect"
+      ]
+    },
+    {
+      "id": "react-05",
+      "title": "Keys by Index",
+      "description": "A list renders one row per name, keyed by array index. Each row contains an **uncontrolled** input — its text lives in the DOM node, not in React state:\n\n```jsx\nfunction Row({ label }) {\n  return (\n    <li>\n      <span>{label}</span>\n      <input defaultValue=\"\" />\n    </li>\n  );\n}\n\nfunction People() {\n  const [items, setItems] = useState(['ada', 'bob', 'cyd']);\n  return (\n    <ul>\n      {items.map((it, i) => <Row key={i} label={it} />)}\n    </ul>\n  );\n}\n```\n\nA user types `hello` into the input on the **ada** row. Then a new name is prepended:\n\n```jsx\nsetItems((prev) => ['zoe', ...prev]);\n```\n\nThe list is now four rows long. React matches old children to new children by key — and every key here shifted its meaning, because the keys are positions rather than identities. The DOM inputs are reused in place; only their `label` props change.\n\nAfter the update, which row's input still contains the text the user typed?\n\nSubmit that row's label as `CTF{label}` — lower case, exactly as it appears in the list.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "Before the update, the typed text lives in the DOM node rendered under key `0`. Ask which name occupies key `0` after the prepend.",
+          "penalty": 30
+        },
+        {
+
+          "text": "`defaultValue` is only used when the input is first created. Since key `0` already existed, React updates that same DOM node's sibling text and leaves the input untouched — so the typed text stays at the top of the list while the names all slide down one position.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "keys",
+        "reconciliation",
+        "uncontrolled"
+      ]
+    },
+    {
+      "id": "react-06",
+      "title": "Memo, Defeated",
+      "description": "Two parents render the same memoised child. One passes an inline arrow function as a prop; the other wraps the identical function in `useCallback`:\n\n```jsx\nconst Child = memo(function Child({ onPick }) {\n  log('child ran');\n  return null;\n});\n\nfunction ParentA() {\n  const [n, setN] = useState(0);\n  return <><span>{n}</span><Child onPick={() => {}} /></>;\n}\n\nfunction ParentB() {\n  const [n, setN] = useState(0);\n  const onPick = useCallback(() => {}, []);\n  return <><span>{n}</span><Child onPick={onPick} /></>;\n}\n```\n\nEach parent is mounted (no StrictMode) and then updated **three** times by setting `n` to a new value. `memo` skips a re-render only when every prop is referentially equal to the previous one, and it compares with `Object.is`.\n\nCounting the initial mount, how many times does `Child` run inside each parent?\n\nSubmit both as `CTF{child_A_B}` — the count under ParentA, then the count under ParentB.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "An arrow function written in the JSX is a brand new object on every render of the parent, and two distinct function objects are never `Object.is`-equal even when the source text matches.",
+          "penalty": 30
+        },
+        {
+          "text": "Under ParentA the memo comparison fails on every update, so the child renders once per parent render — mount plus three updates. Under ParentB the prop is the same object every time, so after the mount the child never renders again.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "memo",
+        "usecallback",
+        "referential-identity"
+      ]
+    },
+    {
+      "id": "react-07",
+      "title": "Context Slips Past Memo",
+      "description": "Four components, one context, one state update:\n\n```jsx\nconst Ctx = createContext(null);\n\nfunction App() {\n  const [count, setCount] = useState(0);\n  return (\n    <Ctx.Provider value={{ theme: 'dark', count }}>\n      <Toolbar />\n    </Ctx.Provider>\n  );\n}\n\nconst Toolbar = memo(function Toolbar() {\n  return <><ThemedButton /><StaticLabel /></>;\n});\n\nfunction ThemedButton() {\n  const v = useContext(Ctx);\n  return <b>{v.count}</b>;\n}\n\nfunction StaticLabel() {\n  return <i>label</i>;\n}\n```\n\nAfter mount, `setCount(1)` is called once. `Toolbar` is memoised and receives no props at all, so its own props comparison always passes — but context updates do not travel by props, and a memo boundary does not stop them from reaching a consumer below it.\n\nWhich of the four component functions actually execute as a result of that single update?\n\nSubmit their names lower-cased and joined by underscores, in the order they appear from the top of the tree downwards, as `CTF{name_name}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "Start at the component that owns the state — it always re-renders. Then ask, for each component below it, whether React reaches it by walking the tree or by waking it up as a context subscriber.",
+          "penalty": 30
+        },
+        {
+          "text": "`Toolbar` bails out on its unchanged (empty) props, which would normally spare everything beneath it — but React schedules a re-render directly on every component that read the context whose value changed. Only one component below the memo boundary calls `useContext`, and its sibling is untouched.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "context",
+        "memo",
+        "re-render"
+      ]
+    },
+    {
+      "id": "react-08",
+      "title": "Bottom Up, Top Down",
+      "description": "A parent and its only child both log on render and in a mount effect:\n\n```jsx\nfunction Child() {\n  log('cr');                                  // child render\n  useEffect(() => { log('ce'); }, []);        // child effect\n  return null;\n}\n\nfunction Parent() {\n  log('pr');                                  // parent render\n  useEffect(() => { log('pe'); }, []);        // parent effect\n  return <Child />;\n}\n```\n\n`Parent` is mounted once, with no StrictMode. Rendering and effects run in opposite directions: React must render a parent before it knows what children to render, but it will not run a parent's effect until every effect beneath it has run — so that by the time a parent's effect fires, its children's DOM and effects are guaranteed to be ready.\n\nWork out the order of the four log lines on that initial mount.\n\nSubmit the four labels in order, joined by underscores, as `CTF{w_x_y_z}` — using the two-letter abbreviations from the comments.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "Both renders happen before either effect does — React finishes the whole render pass and commits the DOM, then flushes effects afterwards.",
+          "penalty": 45
+        },
+        {
+          "text": "The render pass goes outside-in: parent first, then child. The effect flush goes inside-out: the deepest component's effect runs first, and the parent's runs last.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "effects",
+        "commit-order"
+      ]
+    },
+    {
+      "id": "react-09",
+      "title": "Cleanup Before Setup",
+      "description": "One component declares two effects with the same dependency:\n\n```jsx\nfunction Sync({ x }) {\n  useEffect(() => {\n    log('as');\n    return () => log('ac');\n  }, [x]);\n\n  useEffect(() => {\n    log('bs');\n    return () => log('bc');\n  }, [x]);\n\n  return <span>{x}</span>;\n}\n```\n\nThe component mounts with `x === 1` (logging `as` then `bs`), and then `x` changes to `2`. No StrictMode.\n\nA developer assumes each effect is torn down and rebuilt as a unit — cleanup A, setup A, cleanup B, setup B. React does not interleave them like that. Within a single commit it makes two passes over the component's effect list: it destroys everything that needs destroying, and only then creates the replacements. That ordering is what lets one effect's cleanup safely observe state another effect has not yet re-established.\n\nWork out the four log lines produced by the update from `1` to `2`.\n\nSubmit them in order, joined by underscores, as `CTF{w_x_y_z}` — using the two-letter labels from the code.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "Only the update matters, not the mount. Both dependency arrays changed, so both effects are torn down and both are re-created.",
+          "penalty": 45
+        },
+        {
+          "text": "All of the destroy work happens first, then all of the create work — and each pass visits the effects in the order they were declared in the component body, so the effect written first leads both passes.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "useeffect",
+        "cleanup",
+        "ordering"
+      ]
+    },
+    {
+      "id": "react-10",
+      "title": "A New Component Every Render",
+      "description": "A search box defines its result view inside the parent's body:\n\n```jsx\nfunction Search() {\n  const [q, setQ] = useState('');\n\n  function Results() {\n    useEffect(() => { mounts++; }, []);\n    return <span>{q}</span>;\n  }\n\n  return (\n    <>\n      <input value={q} onChange={(e) => setQ(e.target.value)} />\n      <Results />\n    </>\n  );\n}\n```\n\n`Search` mounts, and then a user types three characters — one at a time, producing three re-renders of `Search`.\n\nReact decides whether to update an existing component or replace it by comparing element *types* with `Object.is`. `Results` is a function expression evaluated afresh on every render of `Search`, so each render produces an element whose type is a different function object than the last. React cannot match them up, so it unmounts the old subtree and mounts a new one — which is why the effect with an empty dependency array fires again, and why any state inside `Results` would be lost on every keystroke.\n\nWhat is the final value of `mounts`?\n\nSubmit it as `CTF{mounts_N}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "Count the renders of `Search` first: the mount, plus one per keystroke. Then ask how many of those renders produce an element type React considers unchanged.",
+          "penalty": 45
+        },
+        {
+          "text": "None of them match — every render redefines the inner function, so every render is a fresh mount of the subtree. The count is therefore one per render of the parent, and there are four of those.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "reconciliation",
+        "component-identity"
+      ]
+    }
+  ],
+  "cachedAt": "2026-09-03T11:18:24.822Z"
+}

@@ -1,0 +1,46 @@
+{
+
+  "userId": "test@2.com",
+  "totalPoints": 100,
+  "solvedCount": 1,
+  "submitted": true,
+  "submittedAt": "2026-09-01T11:56:55.706Z",
+  "updatedAt": "2026-09-01T11:56:55.706Z",
+  "questions": {
+    "node/node-01": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T10:04:14.933Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "expiredAt": null,
+      "attempts": 1,
+      "wrongStreak": 1,
+      "lockedUntil": null
+    },
+    "node/node-02": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T10:25:56.862Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "expiredAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    },
+    "node/node-03": {
+      "status": "solved",
+      "pointsAwarded": 100,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T11:55:55.946Z",
+      "solvedAt": "2026-09-01T11:56:26.613Z",
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    }
+  }
+}

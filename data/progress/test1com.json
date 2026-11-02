@@ -1,0 +1,23 @@
+{
+  "userId": "test@1.com",
+  "totalPoints": 0,
+  "solvedCount": 0,
+  "submitted": false,
+  "submittedAt": null,
+  "updatedAt": "2026-09-01T09:53:40.191Z",
+  "questions": {
+    "java/java-01": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T09:53:40.191Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "expiredAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    }
+  }
+}
+

@@ -1,0 +1,66 @@
+{
+  "userId": "test@3.com",
+  "totalPoints": 0,
+  "solvedCount": 0,
+  "submitted": false,
+  "submittedAt": null,
+  "updatedAt": "2026-09-01T13:47:09.300Z",
+  "questions": {
+    "hardware/hardware-01": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T12:15:32.613Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+
+      "lockedUntil": null
+    },
+    "hardware/hardware-02": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T13:44:27.026Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    },
+    "hardware/hardware-05": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T13:46:25.099Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    },
+    "hardware/hardware-04": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T13:46:49.615Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    },
+    "hardware/hardware-03": {
+      "status": "in_progress",
+      "pointsAwarded": 0,
+      "hintsUsed": [],
+      "startedAt": "2026-09-01T13:47:09.299Z",
+      "solvedAt": null,
+      "skippedAt": null,
+      "attempts": 0,
+      "wrongStreak": 0,
+      "lockedUntil": null
+    }
+  }
+}

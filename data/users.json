@@ -1,0 +1,84 @@
+{
+  "11111111-2222-3333-4444-555555555555": {
+    "id": "11111111-2222-3333-4444-555555555555",
+    "displayName": "player-111111",
+    "tokenVersion": 1,
+    "createdAt": "2026-08-25T07:37:21.721Z",
+    "lastLoginAt": "2026-08-25T07:51:06.378Z",
+    "sessionStartedAt": null,
+    "blocked": false,
+    "blockedReason": null,
+    "assignedSubject": null
+  },
+  "99999999-8888-7777-6666-555555555555": {
+    "id": "99999999-8888-7777-6666-555555555555",
+    "displayName": "player-999999",
+    "tokenVersion": 1,
+    "createdAt": "2026-08-25T11:07:54.746Z",
+    "lastLoginAt": "2026-08-25T11:07:54.746Z",
+    "sessionStartedAt": null,
+    "blocked": false,
+    "blockedReason": null,
+    "assignedSubject": null
+  },
+  "local": {
+    "id": "local",
+    "displayName": "player-local",
+    "tokenVersion": 1,
+    "createdAt": "2026-08-26T11:24:06.441Z",
+    "lastLoginAt": "2026-08-26T11:24:06.441Z",
+    "sessionStartedAt": null,
+    "blocked": false,
+    "blockedReason": null,
+    "assignedSubject": null
+  },
+  "test@1.com": {
+    "id": "test@1.com",
+    "displayName": "Test",
+    "tokenVersion": 1,
+    "createdAt": "2026-09-01T08:03:41.115Z",
+    "lastLoginAt": "2026-09-01T09:54:54.791Z",
+    "sessionStartedAt": null,
+    "blocked": false,
+    "blockedReason": null,
+    "assignedSubject": null,
+    "talentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlkIjoiY2ZjMzY1NzQtMmUyYy00MjM5LTg1ODctZWY1MjAzNzQ3YzkxIiwiaWF0IjoxNzg4MjU2NDk0LCJleHAiOjE3ODgzNDI4OTR9._PyCTRs5cU5BMPKwUbOgPuWBrXEUi7moUyH9tmAsSxs"
+  },
+  "test@2.com": {
+    "id": "test@2.com",
+    "displayName": "test2",
+
+    "tokenVersion": 1,
+    "createdAt": "2026-09-01T09:15:50.429Z",
+    "lastLoginAt": "2026-09-01T11:55:48.399Z",
+    "sessionStartedAt": "2026-09-01T11:29:12.009Z",
+    "blocked": false,
+    "blockedReason": null,
+    "talentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlkIjoiNjRiZjQyZWItOGU3Ni00NmJkLThmZGQtNDc1OTY4MmJkMjIzIiwiaWF0IjoxNzg4MjYzNzQ4LCJleHAiOjE3ODgzNTAxNDh9.5QzyjtjrknwpYNF5CBrAD0YiqgxbWCS9uEPq-wHkS6Q",
+    "talentUserId": "64bf42eb-8e76-46bd-8fdd-4759682bd223"
+  },
+  "test@3.com": {
+    "id": "test@3.com",
+    "displayName": "test3",
+    "tokenVersion": 1,
+    "createdAt": "2026-09-01T12:08:08.088Z",
+    "lastLoginAt": "2026-09-01T13:25:03.033Z",
+    "sessionStartedAt": "2026-09-01T12:08:08.102Z",
+    "blocked": false,
+    "blockedReason": null,
+    "talentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlkIjoiZTA0Y2I0N2QtNTU2NS00MjkzLTg1YTItZTY4YTY5M2RiMWM0IiwiaWF0IjoxNzg4MjY5MTAzLCJleHAiOjE3ODgzNTU1MDN9.iscSF50jST9kED9XvQ5u4JBO54_MxMpwQEyGyIJwPX0",
+    "talentUserId": "e04cb47d-5565-4293-85a2-e68a693db1c4"
+  },
+  "react@0.com": {
+    "id": "react@0.com",
+    "displayName": "t",
+    "tokenVersion": 1,
+    "createdAt": "2026-09-02T12:24:44.483Z",
+    "lastLoginAt": "2026-09-03T11:16:13.293Z",
+    "sessionStartedAt": "2026-09-02T12:24:44.492Z",
+    "blocked": false,
+    "blockedReason": null,
+    "talentToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImlkIjoiZjQzNjgwZGYtMDIyNS00YmQxLTljNGQtNWIyMjg4NzI3YjMxIiwiaWF0IjoxNzg4NDM0MTczLCJleHAiOjE3ODg1MjA1NzN9.zOxjG69mbCcfgDzlAHNLQzeRN7uCoXQxFs8FImmmwzY",
+    "talentUserId": "f43680df-0225-4bd1-9c4d-5b2288727b31"
+  }
+}

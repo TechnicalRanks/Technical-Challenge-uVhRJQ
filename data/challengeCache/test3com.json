@@ -1,0 +1,235 @@
+{
+  "intro": {
+    "slug": "hardware",
+
+    "title": "Hardware (Verilog & VHDL)",
+    "intro": "Digital logic bugs rarely announce themselves — a schematic simulates fine and then misbehaves the moment it is synthesized onto real silicon, because simulation and synthesis do not always agree on what your RTL means. These challenges hand you truth tables, waveforms, Verilog/VHDL snippets and timing budgets exactly as a hardware engineer would see them, and ask you to trace them by hand. No simulator required — every answer is derivable from what's printed on the page.",
+    "icon": "network",
+    "questionCount": 10
+  },
+  "questions": [
+    {
+      "id": "hardware-01",
+      "title": "Four Rows, One Gate",
+      "description": "A 2-input combinational block was reverse-engineered from its truth table:\n\n```\nA B | Y\n0 0 | 1\n0 1 | 0\n1 0 | 0\n1 1 | 1\n```\n\n`Y` is 1 exactly when `A` and `B` agree, and 0 exactly when they differ.\n\nName the single standard 2-input gate that implements this table.\n\nSubmit as `CTF{gate}` — the gate's name, lower case (e.g. `and`, `nand`, `xor`...).",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "`XOR` is 1 when the inputs differ. This table is 1 when they agree — the opposite condition.",
+          "penalty": 15
+        },
+        {
+          "text": "The gate whose output is the logical negation of XOR is conventionally named by putting an \"N\" in front of it.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "combinational",
+        "truth-table"
+      ]
+    },
+    {
+      "id": "hardware-02",
+      "title": "Blocking, In Order",
+      "description": "```verilog\n// a = 1, b = 2 before the edge\nalways @(posedge clk) begin\n  a = b;\n  b = a;\n end\n```\n\nBoth assignments use the blocking operator `=`, which executes top-to-bottom **within the same time step**, updating the variable immediately — so the second line sees whatever the first line just wrote.\n\nStarting from `a = 1, b = 2`, what are `a` and `b` immediately after one `posedge clk`?\n\nSubmit as `CTF{a_b}`.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "Execute the two statements one at a time, in the order they're written, updating each variable as you go — exactly like ordinary sequential code.",
+          "penalty": 15
+        },
+        {
+          "text": "Line 1: `a = b` makes `a` equal to `b`'s current value, 2. Line 2 then reads that already-updated `a`.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "verilog",
+        "blocking-assignment"
+      ]
+    },
+    {
+      "id": "hardware-03",
+      "title": "Enough Bits to Count",
+      "description": "A synchronous counter must cycle through exactly 6 states: `0, 1, 2, 3, 4, 5`, then wrap back to `0`.\n\nWhat is the minimum number of flip-flops required to hold the counter's state?\n\nSubmit as `CTF{n}`.",
+      "difficulty": "easy",
+      "basePoints": 100,
+      "timeLimitSeconds": 600,
+      "hints": [
+        {
+          "text": "`n` flip-flops can represent 2^n distinct states. Find the smallest `n` where 2^n is at least 6.",
+          "penalty": 15
+        },
+        {
+          "text": "2 flip-flops only give you 4 states (0-3) — not enough. 3 flip-flops give 8 states (0-7), which is enough room for 0-5.",
+          "penalty": 25
+        }
+      ],
+      "tags": [
+        "counters",
+        "state-encoding"
+      ]
+    },
+    {
+      "id": "hardware-04",
+      "title": "The Swap That Blocking Can't Do",
+      "description": "```verilog\n// a = 1, b = 2 before the first edge\nalways @(posedge clk) begin\n  a <= b;\n  b <= a;\n end\n```\n\nBoth assignments now use the **non-blocking** operator `<=`. Every right-hand side in the block is evaluated using the values `a` and `b` held *before* the edge, and all the updates are applied together at the end of the time step — which is what actually makes a clean swap possible in hardware.\n\nGive `a` and `b` immediately after the **first** `posedge clk`, and again after the **second** `posedge clk`.\n\nSubmit as `CTF{a1_b1_a2_b2}` — values after edge 1, then after edge 2.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "At each edge, compute both right-hand sides FIRST using the old values, then apply both updates simultaneously.",
+          "penalty": 30
+        },
+        {
+          "text": "Edge 1: old a=1, old b=2, so new a=2, new b=1. Edge 2 starts from (a=2, b=1) and swaps again.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "verilog",
+        "nonblocking-assignment"
+      ]
+    },
+    {
+      "id": "hardware-05",
+      "title": "A Mealy Machine, Traced by Hand",
+      "description": "A 2-state Mealy machine (states `A`, `B`, starting in `A`) is defined by this transition/output table:\n\n```\ncurrent state | input | next state | output\nA             | 0     | A          | 0\nA             | 1     | B          | 0\nB             | 0     | A          | 1\nB             | 1     | B          | 0\n```\n\nA Mealy machine's output depends on both the current state AND the input applied in that same cycle.\n\nDrive the input sequence `1, 0, 1, 1` into the machine, one bit per cycle, starting in state `A`.\n\nSubmit the 4 outputs produced, in order, as `CTF{o1o2o3o4}` (no separators, e.g. `CTF{0110}`).",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "Track the current state as you go. Look up (state, input) in the table to get BOTH the output for this cycle and the state for the next cycle.",
+          "penalty": 30
+        },
+        {
+          "text": "Cycle 1: (A,1) -> output 0, next B. Cycle 2: (B,0) -> output 1, next A. Continue the same way for cycles 3 and 4.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "fsm",
+        "mealy"
+      ]
+    },
+    {
+      "id": "hardware-06",
+      "title": "Priority Encoder, Top to Bottom",
+      "description": "```verilog\ncasez (in)\n  4'b1???: out = 3;\n  4'b01??: out = 2;\n  4'b001?: out = 1;\n  4'b0001: out = 0;\n  default: out = 7;\nendcase\n```\n\n`casez` treats `?` as a don't-care, and Verilog case statements match the **first** item that fits, top to bottom — later items are never even checked once an earlier one matches.\n\nWhat does `out` evaluate to when `in = 4'b0110`?\n\nSubmit as `CTF{out}`.",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "Check the patterns in the order they're written. `4'b1???` needs bit 3 to be 1 — it isn't, so move to the next line.",
+          "penalty": 30
+        },
+        {
+          "text": "`4'b01??` needs bits [3:2] to be `01`. For `in = 0110`, bits [3:2] are `01` — that's the match.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "verilog",
+        "priority-encoder",
+        "casez"
+      ]
+    },
+    {
+      "id": "hardware-07",
+      "title": "The Clock Period That Just Barely Works",
+      "description": "A synchronous path has these delays:\n\n- clock-to-Q delay of the source flip-flop: `2.0 ns`\n- combinational logic between the flops: `5.0 ns`\n- setup time required by the destination flip-flop: `1.5 ns`\n\nFor the design to work at every clock edge, the clock period must satisfy:\n\n```\nT_clk >= T_cq + T_comb + T_setup\n```\n\nWhat is the minimum clock period, in nanoseconds, that satisfies this?\n\nSubmit as `CTF{t}` (one decimal place, e.g. `CTF{9.0}`).",
+      "difficulty": "medium",
+      "basePoints": 200,
+      "timeLimitSeconds": 900,
+      "hints": [
+        {
+          "text": "This is a straight sum of the three delays given — no other terms belong in the minimum-period formula here.",
+          "penalty": 30
+        },
+        {
+          "text": "2.0 + 5.0 + 1.5 = 8.5.",
+          "penalty": 50
+        }
+      ],
+      "tags": [
+        "timing",
+        "setup-time"
+      ]
+    },
+    {
+      "id": "hardware-08",
+      "title": "The Signal the Process Forgot",
+      "description": "```vhdl\nprocess(a, b)\nbegin\n  y <= (a and b) or c;\nend process;\n```\n\nA VHDL `process`'s sensitivity list controls when the process body re-runs in **simulation**. This one reads `a`, `b`, and `c`, but only lists `a` and `b` — so a change on `c` alone does not wake the process up, and `y` keeps whatever value it last computed until `a` or `b` changes. A synthesis tool, by contrast, builds combinational hardware that reacts to all three inputs immediately — a real mismatch between what simulates and what gets built.\n\nSuppose `a = 0, b = 0, c = 0` (so `y` has settled to `0`), and then **only `c` changes to `1`**, with `a` and `b` unchanged.\n\nGive the name of the missing signal, and the value `y` incorrectly holds in simulation right after `c` changes (its stale, un-updated value).\n\nSubmit as `CTF{signal_value}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "Compare the signals read inside the process body against the signals listed in `process(...)`. One is used but never listed.",
+          "penalty": 45
+        },
+        {
+          "text": "Because `c` isn't in the sensitivity list, the process doesn't re-execute when `c` changes, so `y` is stuck at the value computed the last time `a` or `b` changed — which was `(0 and 0) or 0 = 0`.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "vhdl",
+        "sensitivity-list",
+        "simulation-mismatch"
+      ]
+    },
+    {
+      "id": "hardware-09",
+      "title": "Only One Bit May Change",
+      "description": "A binary-to-Gray-code converter is defined by `gray = binary XOR (binary >> 1)`, where the shift fills a `0` into the top bit and drops the bottom bit — the standard construction that guarantees adjacent values differ in exactly one bit.\n\nConvert the 4-bit binary value `1011` to its Gray code equivalent using that formula.\n\nSubmit as `CTF{gray}` — the 4-bit result, e.g. `CTF{0000}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "First compute `binary >> 1`: shift `1011` right by one place, filling a 0 at the top: `0101`.",
+          "penalty": 45
+        },
+        {
+          "text": "XOR `1011` with `0101` bit by bit: 1^0=1, 0^1=1, 1^0=1, 1^1=0.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "gray-code",
+        "encoding"
+      ]
+    },
+    {
+      "id": "hardware-10",
+      "title": "Overlap Is Allowed",
+      "description": "A sequence detector watches a serial bit stream and flags every occurrence of the 4-bit pattern `1011`, including **overlapping** occurrences (the last bits of one match can be the first bits of the next).\n\nBit stream, 10 bits, oldest first:\n\n```\n1 0 1 1 0 1 1 0 1 1\n```\n\nCheck every 4-bit window in the stream (bits 1-4, 2-5, 3-6, ... 7-10) and count how many windows equal `1011`.\n\nSubmit as `CTF{matches_n}`.",
+      "difficulty": "hard",
+      "basePoints": 300,
+      "timeLimitSeconds": 1200,
+      "hints": [
+        {
+          "text": "There are 7 possible 4-bit windows in a 10-bit stream. Slide the pattern one bit at a time and compare each window against `1011`.",
+          "penalty": 45
+        },
+        {
+          "text": "Windows starting at positions 1, 4, and 7 each equal `1011`. No other starting position does.",
+          "penalty": 75
+        }
+      ],
+      "tags": [
+        "fsm",
+        "sequence-detector"
+      ]
+    }
+  ],
+  "cachedAt": "2026-09-01T13:51:46.003Z"
+}
